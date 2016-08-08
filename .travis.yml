@@ -1,17 +1,19 @@
-# this file is *not* meant to cover or endorse the use of travis, but rather to
-# help confirm pull requests to this project.
-
-language: python
+language: nix
 
 env:
-  - TOXENV=py26
-  - TOXENV=py27
-  - TOXENV=py33
-  - TOXENV=py34
+  - PY=python26
+  - PY=python27
+  - PY=python33
+  - PY=python34
+  - PY=python35
+  - PY=python36
+  - PY=pypy
 
-install: pip install tox
+script:
+- if [ "$TRAVIS_PULL_REQUEST" != "true" -a "$TRAVIS_BRANCH" = "master" ]; then
+    nix-build release.nix -A sampleproject."$PY";
+  fi
 
-script: tox
-
-notifications:
-  email: false
+matrix:
+  allow_failures:
+    - env: PY=python26
